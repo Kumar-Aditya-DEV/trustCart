@@ -59,6 +59,7 @@ const LoginPage = () => {
         localStorage.setItem('isAuthenticated', 'true');
         navigate('/home');
       } catch (err) {
+        console.error(err);
         setError('Google login failed on server. Using mock connection...');
         // Fallback mock since valid client ID might not be configured
         localStorage.setItem('isAuthenticated', 'true');
