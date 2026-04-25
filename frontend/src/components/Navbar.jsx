@@ -1,20 +1,29 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [navSearchQuery, setNavSearchQuery] = useState('');
 
   const isActive = (path) => location.pathname === path;
+
+  const handleNavSearch = (e) => {
+    if (e.key === 'Enter' && navSearchQuery.trim()) {
+      navigate(`/search?query=${encodeURIComponent(navSearchQuery.trim())}`);
+      setNavSearchQuery('');
+    }
+  };
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl shadow-[0_0_15px_rgba(0,229,255,0.1)]">
       <div className="flex justify-between items-center px-8 py-4 w-full max-w-none">
         <div className="flex items-center gap-12">
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-cyan-200 to-cyan-400 bg-clip-text text-transparent font-headline tracking-tight">
+          <Link to="/home" className="text-2xl font-bold bg-gradient-to-r from-cyan-200 to-cyan-400 bg-clip-text text-transparent font-headline tracking-tight">
             TrustCart
           </Link>
           <div className="hidden md:flex gap-8 items-center">
-            <NavLink to="/" label="Home" active={isActive('/')} />
+            <NavLink to="/home" label="Home" active={isActive('/home') || isActive('/')} />
             <NavLink to="/verify" label="Verify" active={isActive('/verify')} />
             <NavLink to="/stores" label="Stores" active={isActive('/stores')} />
             <NavLink to="/account" label="Account" active={isActive('/account')} />
@@ -24,9 +33,12 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center bg-surface-container-low rounded-full px-4 py-1.5 border border-outline-variant/20">
             <span className="material-symbols-outlined text-sm text-slate-400">search</span>
             <input 
-              className="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-48 font-label" 
+              className="bg-transparent border-none focus:ring-0 outline-none text-sm text-on-surface w-48 font-label" 
               placeholder="Search catalog..." 
               type="text" 
+              value={navSearchQuery}
+              onChange={(e) => setNavSearchQuery(e.target.value)}
+              onKeyDown={handleNavSearch}
             />
           </div>
           <div className="flex gap-4 items-center">

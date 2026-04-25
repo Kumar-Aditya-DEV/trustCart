@@ -29,14 +29,19 @@ const HomePage = () => {
                 <div className="relative flex items-center bg-surface-container-high rounded-full p-2 border border-outline-variant/30 shadow-[0_0_15px_rgba(0,229,255,0.05)]">
                   <span className="material-symbols-outlined ml-4 text-primary">search</span>
                   <input
-                    className="flex-1 bg-transparent border-none focus:ring-0 text-on-surface px-4 font-body py-4"
+                    className="flex-1 bg-transparent border-none focus:ring-0 outline-none text-on-surface px-4 font-body py-4"
                     placeholder="Enter product name, serial, or SKU..."
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+                      }
+                    }}
                   />
                   <button
-                    onClick={() => navigate('/verify')}
+                    onClick={() => navigate(`/search?query=${encodeURIComponent(searchQuery)}`)}
                     className="bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold px-8 py-3 rounded-full active:scale-95 transition-transform font-label uppercase tracking-widest text-xs"
                   >
                     Authenticate
