@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useCart } from '../context/CartContext';
 
 const ALL_PRODUCTS = [
   {
@@ -10,6 +11,7 @@ const ALL_PRODUCTS = [
     title: "AeroVance Obsidian v1",
     desc: "Authenticated through 256-bit unique fiber mapping. Guaranteed original release series.",
     score: "99.8%",
+    price: 240,
     badge: "L3 Certified",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAJ9rH2zNrH7w35mZn6tdInzZm1TYRZm18hVw4hJz7-hIwN6VXK4Qg9UB2gBeHmMVOKHHVQI2u4giQ14yrksWbhO-W-b2lQgOpwSAol2TREgPYNa7p-o4RfbxO2Df2PK4LrAiIhMOIFR_Ab3gdFro_fWassKnUnZhzl2a3YNte2ESdyYH9qzwpQerP-g6lkkaZ06jnkADbJEfB2kHRhwOPoFqKEcT0p6aj_1CzyCKUFqOaN73ABoCxOEjPnIEFifimAYAQFSQnzVW8"
   },
@@ -19,6 +21,7 @@ const ALL_PRODUCTS = [
     title: "NeuralWatch Nexus",
     desc: "Validated manufacturer ledger from assembly to final distribution node.",
     score: "98.4%",
+    price: 850,
     badge: "L2 Verified",
     badgeColor: "secondary",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCJNmHc0O3wp6OO2rsgOyTK4KveG49VRUX6TK4aaYFT-K-iFoGDACSfgR4w4-tad-SkrxuK7zgIAxgXKOpsmhzrmFoycwSNGg-Z03d2qIWrULW6qGBMqWJRhRwgpZYLPGmgqsj7Sqf96UfWaic8oHz69Xa_dwSIg4SmANuoZB_H08Zv_V05ySidlSenF-2TNHPVn1n9Z-cZdeHFU0TB3kmyFRrxJda5_yOC1n8BfkVJvk1ThVr_QxdWlAwkGayWhI74J2hoFSwKcRg"
@@ -29,6 +32,7 @@ const ALL_PRODUCTS = [
     title: "Aether Essence Rare",
     desc: "Spectral analysis verified against master compound profile. Batch #8210.",
     score: "100%",
+    price: 45,
     badge: "L3 Certified",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCVhX_sHEV4TvG9TOLRSYo8wFY68vZbqx91sy_m-AcbreiQgC9OQpCmOeOqG7hPcy043K0EGJGfHh8_vIZneZDrKXdfXct23O8LQmdx8m1VxeIBbySntEjqNvLox1sJskTZrjjIyh_Jk3xxmD4AaxFer2QoPBj5P_LA42LjjNrpXlkOx_Xwd_EoVOJi_f6Wal1V76U7n1gASNt3pRjFX5kOwCooc2XzTQxlUPPNTawyD5ny7ROL8Z2y8Yz4-kql2D1SXFTSEkKX5qU"
   },
@@ -38,6 +42,7 @@ const ALL_PRODUCTS = [
     title: "SonicForge Pro Monitor",
     desc: "Ownership history confirmed via distributed ledger. Serial #SFP-992.",
     score: "94.2%",
+    price: 620,
     badge: "L1 Verified",
     badgeColor: "error",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDXAK9iMzKrz0Sct6WvCZWGBdBUKCrHivjAQtZCNsznbcU4fNen6pDWDAV9nGieyYvMSAUQcLZK81T0EWyCNuE1fkRLrD1g_ErGj2NatBiUPIlskmvSO6aw-o6Geist16kSRJHKobBtyRDBMYjBuKoLNh3fj0kPqf_Tu-BH_S2INa49dA8oH3Bg-HR6vfqPfpqxB04S8YUupcgs1DYgkygAw3BerbZNR3AZiLPY6ckCMzhGke5r6HZBlPxNLaCq-Qjug7C83j7fEzs"
@@ -48,8 +53,9 @@ const ALL_PRODUCTS = [
     title: "LumiCell Regenerative Serum",
     desc: "Molecular batch verification active. Lab-certified organic compounds.",
     score: "99.9%",
+    price: 85,
     badge: "L3 Certified",
-    image: "/assets/medicine.png"
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI"
   },
   {
     id: 6,
@@ -57,6 +63,7 @@ const ALL_PRODUCTS = [
     title: "RetroVision Classic S",
     desc: "Physical component inspection and serial sequence matching confirmed.",
     score: "97.1%",
+    price: 180,
     badge: "L2 Verified",
     badgeColor: "secondary",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDJiuOOWz-zk54fQDED04YUnXVHfxvvREu28NRq3T4prVq3z9r7BVfphTKIFnzkoZM43FPNbyzlheUgxGIMXrNtqcqNMXfldf9WSDvmLLaSPUr5qDNcmJ91Pf6xgHagdkECpKR59Aj9HKzwzRXXL-ShEh1-Qhv-CwYYYuOoPxTeUxle-1UXG7hpq3s8jTi_lLBoYQHdkUOC9_oKyX_kDgnBeBl0417x0QuppySjeht03HnSBfaMErLQ7NWmiIvSs6SOfcERUE0k7NQ"
@@ -67,6 +74,7 @@ const ALL_PRODUCTS = [
     title: "HydraCore Aqua Cream",
     desc: "Ocean-sourced minerals with verified ethical harvesting certificate.",
     score: "96.5%",
+    price: 55,
     badge: "L2 Verified",
     badgeColor: "secondary",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI"
@@ -77,8 +85,9 @@ const ALL_PRODUCTS = [
     title: "NeuroGenix Advanced",
     desc: "Molecularly verified neuro-recovery compound. Batch #NG-882.",
     score: "99.9%",
+    price: 120,
     badge: "L3 Certified",
-    image: "/assets/medicine.png"
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI"
   },
   {
     id: 9,
@@ -86,9 +95,10 @@ const ALL_PRODUCTS = [
     title: "OmniFuel Bio-Bar",
     desc: "Sustainably sourced, toxin-free nutritional matrix. Authenticity guaranteed.",
     score: "98.2%",
+    price: 12,
     badge: "L2 Verified",
     badgeColor: "secondary",
-    image: "/assets/packed_food.png"
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI"
   },
   {
     id: 10,
@@ -96,9 +106,10 @@ const ALL_PRODUCTS = [
     title: "OptiVision Serum",
     desc: "Retinal repair therapy with authenticated sequence tag. Batch #OV-112.",
     score: "97.5%",
+    price: 95,
     badge: "L2 Verified",
     badgeColor: "secondary",
-    image: "/assets/medicine.png"
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI"
   },
   {
     id: 11,
@@ -106,20 +117,46 @@ const ALL_PRODUCTS = [
     title: "HydroGel Nutrition Pack",
     desc: "Instant hydration and electrolyte matrix. Pre-release audit passed.",
     score: "98.9%",
+    price: 8,
     badge: "L3 Certified",
-    image: "/assets/packed_food.png"
-  }
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI"
+  },
+  { id: 12, category: "Skincare", title: "QuantumSoothe Night Balm", desc: "Nano-encapsulated repair formula with verified batch integrity.", score: "99.1%", price: 75, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 13, category: "Cosmetics", title: "VelvetDerm Foundation", desc: "Mineral-based silk finish. Verified against master pigment ledger.", score: "98.7%", price: 38, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 14, category: "Footwear", title: "StratoStride Aero", desc: "Ultralight aerodynamic structure with unique serial DNA tag.", score: "99.5%", price: 210, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 15, category: "Electronics", title: "IonCharge Ultra", desc: "High-capacity power cell with manufacturer chain authentication.", score: "96.8%", price: 45, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 16, category: "Medicine", title: "CardioShield Capsules", desc: "Sustained-release cardiac support. Verified clinical batch #CS-101.", score: "99.4%", price: 150, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 17, category: "Packed Food", title: "TerraGrain Clusters", desc: "Toxin-free, non-GMO cereal matrix with origin certificate.", score: "97.9%", price: 15, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 18, category: "Skincare", title: "GloRadiance Complex", desc: "Phased Vitamin C delivery system. Authenticated lab sequence.", score: "98.2%", price: 65, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcb) mrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 19, category: "Cosmetics", title: "PrismMatte Kit", desc: "Long-wear pigment array. Micro-batch verification enabled.", score: "97.3%", price: 42, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 20, category: "Footwear", title: "VelocityRunner Apex", desc: "Engineered kinetic energy return with trace-ready chip.", score: "99.8%", price: 290, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 21, category: "Electronics", title: "SynchroLogic Hub", desc: "Centralized device node with encrypted manufacturer key.", score: "95.9%", price: 130, badge: "L1 Verified", badgeColor: "error", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 22, category: "Medicine", title: "HepaPure Detox", desc: "Botanical-clinical hybrid for metabolic support. Verified origin.", score: "98.5%", price: 88, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 23, category: "Packed Food", title: "VitaMix Squeeze", desc: "Cold-pressed nutrient matrix. Supply chain traced batch.", score: "99.2%", price: 10, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 24, category: "Skincare", title: "DermaSeal Repair", desc: "Barrier support with molecular integrity seal. Lab-audited.", score: "99.7%", price: 92, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 25, category: "Cosmetics", title: "StellarLash Mascara", desc: "Holographic fiber distribution. Batch-linked authenticity.", score: "96.4%", price: 28, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 26, category: "Footwear", title: "AlpineTrek Rugged", desc: "Sustainable composite build with ruggedized serial tracking.", score: "98.1%", price: 220, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 27, category: "Electronics", title: "FluxRouter Node", desc: "Next-gen mesh router with hardware-level security key.", score: "99.3%", price: 180, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 28, category: "Medicine", title: "ArthriRelief Gel", desc: "Topical recovery serum with authenticated molecular trace.", score: "97.8%", price: 45, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 29, category: "Packed Food", title: "MacroBite Slab", desc: "Ultra-high protein matrix. 100% verified non-synthetic.", score: "96.2%", price: 18, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 30, category: "Skincare", title: "SolarShield SPF", desc: "Broad-spectrum protection. Batch integrity verified via GPS log.", score: "100%", price: 35, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 31, category: "Cosmetics", title: "OpulentGlow Palette", desc: "Curated pigment set. Authenticated manufacturer seal.", score: "98.9%", price: 68, badge: "L3 Certified", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" },
+  { id: 32, category: "Footwear", title: "UrbanGlide Sneakers", desc: "Daily commute optimization with serial verify tech.", score: "97.4%", price: 155, badge: "L2 Verified", badgeColor: "secondary", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCeSgOPUd6RkD-9EUmzfs4aMkz4l72mReoEGO-UyWlX3FPeewD_rsFeDEFMgjBKf2dRJI9HLy4AUeCSm4KCYfGk3kNcbMmrRvIahniOHfPLoTCFiX_6DTMZztfmDVW3J-IEB5NVaWYlVQbiR7rjaJK72e11yaSNH2lTYWL0oIInXXSek-wjtwxsLasgBIhSNog3vF6SrKUTSvJQDqO-UbWE9su899RjBeIy4eWSC8_czZH7V9n4oy2vOD920cHiuMvPsqu-SiapUbI" }
 ];
 
 const SearchResults = () => {
+  const { addToCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState('Authenticity Score');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  
   const activeCategory = searchParams.get('category');
   const searchQuery = searchParams.get('query');
 
   const filteredProducts = useMemo(() => {
-    let result = ALL_PRODUCTS;
+    let result = [...ALL_PRODUCTS];
 
     if (activeCategory) {
       result = result.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
@@ -134,8 +171,30 @@ const SearchResults = () => {
       );
     }
 
+    // Functional Sorting logic
+    result.sort((a, b) => {
+      if (sortBy === 'Authenticity Score') {
+        const scoreA = parseFloat(a.score.replace('%', ''));
+        const scoreB = parseFloat(b.score.replace('%', ''));
+        return scoreB - scoreA;
+      }
+      if (sortBy === 'Recent Listing') {
+        return b.id - a.id;
+      }
+      if (sortBy === 'Value High-Low') {
+        return b.price - a.price;
+      }
+      return 0;
+    });
+
     return result;
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, sortBy]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(start, start + itemsPerPage);
+  }, [filteredProducts, currentPage]);
 
   const handleCategoryToggle = (category) => {
     if (activeCategory === category) {
@@ -144,6 +203,14 @@ const SearchResults = () => {
       searchParams.set('category', category);
     }
     setSearchParams(searchParams);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo(0, 0);
+    }
   };
 
   return (
@@ -156,36 +223,14 @@ const SearchResults = () => {
           <aside className="w-full md:w-64 flex-shrink-0">
             <div className="sticky top-28 space-y-10">
               <FilterGroup title="Filter by Category">
-                <Checkbox
-                  label="Skincare"
-                  checked={activeCategory === 'Skincare'}
-                  onChange={() => handleCategoryToggle('Skincare')}
-                />
-                <Checkbox
-                  label="Cosmetics"
-                  checked={activeCategory === 'Cosmetics'}
-                  onChange={() => handleCategoryToggle('Cosmetics')}
-                />
-                <Checkbox
-                  label="Footwear"
-                  checked={activeCategory === 'Footwear'}
-                  onChange={() => handleCategoryToggle('Footwear')}
-                />
-                <Checkbox
-                  label="Electronics"
-                  checked={activeCategory === 'Electronics'}
-                  onChange={() => handleCategoryToggle('Electronics')}
-                />
-                <Checkbox
-                  label="Medicine"
-                  checked={activeCategory === 'Medicine'}
-                  onChange={() => handleCategoryToggle('Medicine')}
-                />
-                <Checkbox
-                  label="Packed Food"
-                  checked={activeCategory === 'Packed Food'}
-                  onChange={() => handleCategoryToggle('Packed Food')}
-                />
+                {['Skincare', 'Cosmetics', 'Footwear', 'Electronics', 'Medicine', 'Packed Food'].map(cat => (
+                  <Checkbox
+                    key={cat}
+                    label={cat}
+                    checked={activeCategory === cat}
+                    onChange={() => handleCategoryToggle(cat)}
+                  />
+                ))}
               </FilterGroup>
 
               <FilterGroup title="Verification Level">
@@ -251,16 +296,11 @@ const SearchResults = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map(product => (
+              {paginatedProducts.map(product => (
                 <ProductCard
                   key={product.id}
-                  category={product.category}
-                  title={product.title}
-                  desc={product.desc}
-                  score={product.score}
-                  badge={product.badge}
-                  badgeColor={product.badgeColor}
-                  image={product.image}
+                  product={product}
+                  onBuy={() => addToCart(product)}
                 />
               ))}
             </div>
@@ -272,21 +312,35 @@ const SearchResults = () => {
             )}
 
             {/* Pagination */}
-            <div className="mt-20 flex justify-center items-center gap-8">
-              <button className="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary transition-all">
-                <span className="material-symbols-outlined">arrow_back</span>
-              </button>
-              <div className="flex gap-4 font-body">
-                <span className="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-bold text-xs">1</span>
-                <span className="w-8 h-8 rounded hover:bg-surface-container-high flex items-center justify-center text-xs cursor-pointer text-on-surface">2</span>
-                <span className="w-8 h-8 rounded hover:bg-surface-container-high flex items-center justify-center text-xs cursor-pointer text-on-surface">3</span>
-                <span className="w-8 h-8 flex items-center justify-center text-xs text-on-surface">...</span>
-                <span className="w-8 h-8 rounded hover:bg-surface-container-high flex items-center justify-center text-xs cursor-pointer text-on-surface">12</span>
+            {totalPages > 1 && (
+              <div className="mt-20 flex justify-center items-center gap-8">
+                <button 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center transition-all ${currentPage === 1 ? 'opacity-30 cursor-not-allowed' : 'text-slate-500 hover:text-primary hover:border-primary'}`}
+                >
+                  <span className="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div className="flex gap-4 font-body">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <span 
+                      key={i}
+                      onClick={() => handlePageChange(i + 1)}
+                      className={`w-8 h-8 rounded flex items-center justify-center font-bold text-xs cursor-pointer transition-all ${currentPage === i + 1 ? 'bg-primary text-on-primary' : 'hover:bg-surface-container-high text-on-surface'}`}
+                    >
+                      {i + 1}
+                    </span>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center transition-all ${currentPage === totalPages ? 'opacity-30 cursor-not-allowed' : 'text-slate-500 hover:text-primary hover:border-primary'}`}
+                >
+                  <span className="material-symbols-outlined">arrow_forward</span>
+                </button>
               </div>
-              <button className="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary transition-all">
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </div>
+            )}
           </section>
         </div>
       </main>
@@ -323,7 +377,8 @@ const Radio = ({ label, name, checked }) => (
   </label>
 );
 
-const ProductCard = ({ category, title, desc, score, badge, badgeColor, image }) => {
+const ProductCard = ({ product, onBuy }) => {
+  const { category, title, desc, score, price, badge, badgeColor, image } = product;
   const badgeClasses = {
     primary: "bg-primary/10 text-primary border-primary/20",
     secondary: "bg-secondary-container/10 text-secondary-container border-secondary-container/20",
@@ -342,14 +397,20 @@ const ProductCard = ({ category, title, desc, score, badge, badgeColor, image })
       </div>
       <div className="px-2">
         <p className="text-[10px] font-label text-primary-container tracking-widest uppercase mb-2">{category}</p>
-        <h2 className="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-primary transition-colors">{title}</h2>
-        <p className="text-sm text-on-surface-variant mb-6 line-clamp-2">{desc}</p>
+        <h2 className="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-primary transition-colors line-clamp-1">{title}</h2>
+        <p className="text-sm text-on-surface-variant mb-4 line-clamp-2">{desc}</p>
+        <div className="mb-4">
+          <span className="text-xl font-headline font-bold text-on-surface">${price.toFixed(2)}</span>
+        </div>
         <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
           <div>
             <p className="text-[10px] font-label text-slate-500 uppercase">Trust Score</p>
             <p className="text-lg font-headline font-bold text-primary">{score}</p>
           </div>
-          <button className="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 py-2 rounded-lg text-xs font-bold active:scale-95 transition-all shadow-[0_0_15px_rgba(0,229,255,0.2)]">
+          <button 
+            onClick={onBuy}
+            className="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 py-2 rounded-lg text-xs font-bold active:scale-95 transition-all shadow-[0_0_15px_rgba(0,229,255,0.2)]"
+          >
             VERIFY & BUY
           </button>
         </div>
