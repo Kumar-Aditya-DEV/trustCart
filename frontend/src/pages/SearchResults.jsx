@@ -116,11 +116,26 @@ const SearchResults = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState('Authenticity Score');
   const activeCategory = searchParams.get('category');
+  const searchQuery = searchParams.get('query');
 
   const filteredProducts = useMemo(() => {
-    if (!activeCategory) return ALL_PRODUCTS;
-    return ALL_PRODUCTS.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
-  }, [activeCategory]);
+    let result = ALL_PRODUCTS;
+
+    if (activeCategory) {
+      result = result.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
+    }
+
+    if (searchQuery) {
+      const term = searchQuery.toLowerCase();
+      result = result.filter(p => 
+        p.title.toLowerCase().includes(term) || 
+        p.desc.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term)
+      );
+    }
+
+    return result;
+  }, [activeCategory, searchQuery]);
 
   const handleCategoryToggle = (category) => {
     if (activeCategory === category) {
