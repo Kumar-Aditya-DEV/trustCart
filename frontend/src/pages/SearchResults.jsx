@@ -150,6 +150,8 @@ const SearchResults = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState('Authenticity Score');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [verifyingKey, setVerifyingKey] = useState(null);
   const itemsPerPage = 8;
   
   const activeCategory = searchParams.get('category');
@@ -301,6 +303,8 @@ const SearchResults = () => {
                   key={product.id}
                   product={product}
                   onBuy={() => addToCart(product)}
+                  onViewBrand={() => setSelectedBrand(product)}
+                  onVerifyKey={() => setVerifyingKey(product)}
                 />
               ))}
             </div>
@@ -346,6 +350,72 @@ const SearchResults = () => {
       </main>
 
       <Footer />
+
+      {/* Brand Profile Modal */}
+      {selectedBrand && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[200] flex items-center justify-center p-8">
+          <div className="max-w-md w-full glass-panel p-8 rounded-3xl border-primary/20 space-y-6 animate-in zoom-in duration-300 text-left">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-2xl font-headline font-bold text-on-surface">Brand Dossier</h3>
+                <p className="text-primary font-label text-xs tracking-widest uppercase">{selectedBrand.category} Sector</p>
+              </div>
+              <button onClick={() => setSelectedBrand(null)} className="material-symbols-outlined text-slate-500 hover:text-on-surface">close</button>
+            </div>
+            <div className="space-y-4">
+              <div className="p-4 bg-surface-container-low rounded-xl border border-outline-variant/20">
+                <p className="text-[10px] font-label text-slate-500 uppercase mb-1">Authenticated Entity</p>
+                <p className="font-bold text-lg">{selectedBrand.title.split(' ')[0]} Corp International</p>
+              </div>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                Global rating: <span className="text-primary font-bold">AAA+</span>. 
+                This brand has maintained a 99.9% verification success rate over the last 15,000 ledger cycles. 
+                All distribution nodes are currently active and audited.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                   <p className="text-[9px] text-slate-500 font-bold uppercase">Stores</p>
+                   <p className="text-lg font-headline font-bold">242</p>
+                </div>
+                <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                   <p className="text-[9px] text-slate-500 font-bold uppercase">Audits</p>
+                   <p className="text-lg font-headline font-bold">12k+</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Manufacturer Key Modal */}
+      {verifyingKey && (
+        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-2xl z-[200] flex items-center justify-center p-8">
+          <div className="max-w-lg w-full glass-panel p-10 rounded-[2rem] border-primary/30 space-y-8 animate-in slide-in-from-bottom-8 duration-500 text-center">
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/20">
+               <span className="material-symbols-outlined text-4xl text-primary animate-pulse">fingerprint</span>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-3xl font-headline font-black tracking-tight">VERIFY KEY</h3>
+              <p className="text-slate-400 text-sm font-body">Cryptographic hardware-level authentication protocol</p>
+            </div>
+            <div className="bg-slate-950/60 p-6 rounded-2xl border border-outline-variant/30 font-mono text-left space-y-3">
+              <div className="flex justify-between text-[10px] text-slate-500 uppercase tracking-widest">
+                <span>Hardware ID</span>
+                <span className="text-primary">HW-8829-001</span>
+              </div>
+              <p className="text-primary break-all leading-tight">0x882A...F920-BC22-X901-TRST</p>
+              <div className="pt-2 flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full animate-ping"></div>
+                <span className="text-[10px] text-primary uppercase font-bold tracking-tighter">On-Chain validation active</span>
+              </div>
+            </div>
+            <div className="pt-4 flex flex-col gap-3">
+              <button onClick={() => setVerifyingKey(null)} className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-bold uppercase tracking-widest text-xs shadow-[0_10px_20px_rgba(0,229,255,0.2)]">Confirm Integrity</button>
+              <button onClick={() => setVerifyingKey(null)} className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2">Decline Protocol</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -377,7 +447,7 @@ const Radio = ({ label, name, checked }) => (
   </label>
 );
 
-const ProductCard = ({ product, onBuy }) => {
+const ProductCard = ({ product, onBuy, onViewBrand, onVerifyKey }) => {
   const { category, title, desc, score, price, badge, badgeColor, image } = product;
   const badgeClasses = {
     primary: "bg-primary/10 text-primary border-primary/20",
@@ -398,7 +468,24 @@ const ProductCard = ({ product, onBuy }) => {
       <div className="px-2">
         <p className="text-[10px] font-label text-primary-container tracking-widest uppercase mb-2">{category}</p>
         <h2 className="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-primary transition-colors line-clamp-1">{title}</h2>
-        <p className="text-sm text-on-surface-variant mb-4 line-clamp-2">{desc}</p>
+        <p className="text-sm text-on-surface-variant mb-3 line-clamp-2">{desc}</p>
+        
+        {/* Brand Utility Links from image */}
+        <div className="flex gap-4 mb-4">
+          <button 
+            onClick={onViewBrand}
+            className="text-[9px] font-bold text-primary tracking-[0.1em] uppercase hover:text-on-surface transition-colors cursor-pointer"
+          >
+            VIEW BRAND PROFILE
+          </button>
+          <button 
+            onClick={onVerifyKey}
+            className="text-[9px] font-bold text-primary tracking-[0.1em] uppercase hover:text-on-surface transition-colors cursor-pointer"
+          >
+            VERIFY MANUFACTURER KEY
+          </button>
+        </div>
+
         <div className="mb-4">
           <span className="text-xl font-headline font-bold text-on-surface">${price.toFixed(2)}</span>
         </div>

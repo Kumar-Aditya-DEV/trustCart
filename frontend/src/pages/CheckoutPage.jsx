@@ -6,9 +6,10 @@ import Footer from '../components/Footer';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cartItems, totalPrice, setIsCartOpen } = useCart();
+  const { cartItems, totalPrice, setIsCartOpen, clearCart } = useCart();
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showBlockchainModal, setShowBlockchainModal] = useState(false);
 
   const handlePlaceOrder = () => {
     setIsProcessing(true);
@@ -16,7 +17,19 @@ const CheckoutPage = () => {
     setTimeout(() => {
       setIsProcessing(false);
       setStep(3);
+      clearCart(); // Clear the cart after successful order
     }, 2500);
+  };
+
+  const downloadCertificate = () => {
+    // Simulate certificate generation and download
+    const element = document.createElement("a");
+    const file = new Blob(["TrustCart Authenticity Certificate\n\nTransaction: #TXN-9982-AXV-2026\nDate: " + new Date().toLocaleString() + "\nStatus: VERIFIED ON-CHAIN\n\nThis document certifies the immutable origin and safe transit of your payload."], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "Authenticity_Certificate.txt";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   if (cartItems.length === 0 && step !== 3) {
@@ -130,10 +143,27 @@ const CheckoutPage = () => {
                     <p className="text-on-surface-variant max-w-sm mx-auto font-body">Transaction ID: <span className="font-mono text-primary">#TXN-9982-AXV-2026</span></p>
                     <p className="text-slate-400 text-sm">Your verified assets have been secured for transit. Monitor your neural terminal for shipping flux.</p>
                   </div>
-                  <div className="pt-6">
+                  
+                  {/* Action Buttons from image */}
+                  <div className="flex flex-col md:flex-row gap-4 justify-center pt-6">
+                    <button 
+                      onClick={downloadCertificate}
+                      className="px-8 py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-bold text-sm transition-all hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] active:scale-95"
+                    >
+                      Download Certificate
+                    </button>
+                    <button 
+                      onClick={() => setShowBlockchainModal(true)}
+                      className="px-8 py-4 border border-outline-variant/30 text-primary rounded-xl font-bold text-sm transition-all hover:bg-primary/5 active:scale-95"
+                    >
+                      View Blockchain TX
+                    </button>
+                  </div>
+
+                  <div className="pt-2">
                     <button 
                       onClick={() => navigate('/home')}
-                      className="px-12 py-4 bg-surface-container-high hover:bg-primary/20 border border-outline-variant/30 rounded-xl font-bold uppercase tracking-widest text-xs transition-all"
+                      className="text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-on-surface transition-colors"
                     >
                       Return to Hub
                     </button>
@@ -183,6 +213,37 @@ const CheckoutPage = () => {
           </div>
         </div>
       </main>
+
+      {/* Blockchain Modal Simulation */}
+      {showBlockchainModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[200] flex items-center justify-center p-8">
+           <div className="max-w-2xl w-full glass-panel p-8 rounded-3xl border-primary/20 space-y-6 animate-in zoom-in duration-300">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-headline font-bold text-on-surface">Blockchain Ledger Explorer</h3>
+                <button onClick={() => setShowBlockchainModal(false)} className="material-symbols-outlined text-slate-500 hover:text-on-surface">close</button>
+              </div>
+              <div className="bg-slate-900/50 p-6 rounded-xl font-mono text-[11px] text-primary/80 space-y-2 overflow-x-auto">
+                <p>{"{"}</p>
+                <p className="pl-4">"block_height": 2048821,</p>
+                <p className="pl-4">"txn_hash": "0x7d92...f82a",</p>
+                <p className="pl-4">"status": "confirmed",</p>
+                <p className="pl-4">"data_integrity": 1.0,</p>
+                <p className="pl-4">"payload": [</p>
+                {cartItems.length > 0 ? cartItems.map(i => (
+                  <p key={i.id} className="pl-8">{"{ id: " + i.id + ", qty: " + i.quantity + " },"}</p>
+                )) : <p className="pl-8">"Snapshot verified."</p>}
+                <p className="pl-4">]</p>
+                <p>{"}"}</p>
+              </div>
+              <div className="flex justify-center flex-col items-center gap-4 py-4">
+                 <div className="w-full h-1 bg-surface-container-high rounded-full relative overflow-hidden">
+                    <div className="absolute inset-0 bg-primary animate-pulse opacity-20"></div>
+                 </div>
+                 <p className="text-xs text-slate-500 font-label uppercase tracking-widest italic">Immutable Record Locked</p>
+              </div>
+           </div>
+        </div>
+      )}
 
       <Footer />
     </div>
