@@ -9,6 +9,7 @@ import SearchResults from '../pages/SearchResults';
 import StoreAvailability from '../pages/StoreAvailability';
 import ProductVerification from '../pages/ProductVerification';
 import UserDashboard from '../pages/UserDashboard';
+import CheckoutPage from '../pages/CheckoutPage';
 import NotFound from '../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -26,6 +27,7 @@ const AppRouter = () => {
       {/* Semi-Protected / Feature Routes */}
       <Route path="/stores" element={<StoreAvailability />} />
       <Route path="/verify" element={<ProductVerification />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
 
       {/* Protected Routes */}
       <Route
